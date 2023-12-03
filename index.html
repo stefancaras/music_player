@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="shortcut icon" href="#" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="script.js" defer></script>
+    <title>Music Player</title>
+  </head>
+  <body>
+    <div class="music-container">
+      <div class="img-container m-3">
+        <img src="images/0.jpg" alt="music-cover" id="cover" />
+        <div class="dot absolute-center"></div>
+      </div>
+      <div class="music-info text-center w-100">
+        <h5 class="title fw-bold"></h5>
+        <h5 class="artist mb-4"></h5>
+        <div class="progress-container">
+          <div class="progress bg-primary"></div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div id="curr-time"></div>
+          <div id="dur-time"></div>
+        </div>
+      </div>
+
+      <audio src="music/0.mp3" id="audio" preload="auto"></audio>
+
+      <div class="navigation">
+        <button id="prev" class="action-btn text-primary">
+          <i class="fas fa-backward"></i>
+        </button>
+        <button id="play" class="action-btn bg-primary text-white">
+          <i class="fas fa-play"></i>
+        </button>
+        <button id="next" class="action-btn text-primary">
+          <i class="fas fa-forward"></i>
+        </button>
+      </div>
+
+      <ul class="playlist list-group overflow-auto w-100 mt-4"></ul>
+    </div>
+  </body>
+</html>

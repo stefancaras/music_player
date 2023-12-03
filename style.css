@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css?family=Lato&display=swap");
+
+body {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  background: #f2f2f2;
+  font-family: "Lato", sans-serif;
+}
+li > i {
+  display: inline-block;
+  width: 10%;
+}
+li > span {
+  display: inline-block;
+  width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.music-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 94vh;
+  min-height: 500px;
+  width: 100vw;
+  max-width: 400px;
+  background-color: #fefefe;
+  border-radius: 15px;
+  box-shadow: 0 20px 20px #000b;
+  padding: 20px 30px;
+  margin-top: 3vh;
+}
+.img-container {
+  position: relative;
+  width: 50%;
+}
+.img-container img {
+  border-radius: 50%;
+  width: 100%;
+  animation: rotate 10s linear infinite;
+  animation-play-state: paused;
+}
+.music-container.play .img-container img {
+  animation-play-state: running;
+}
+.dot {
+  width: 20px;
+  height: 20px;
+  background-color: #fefefe;
+  border-radius: 50%;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn {
+  width: 50px;
+  height: 50px;
+  background: #0000;
+  font-size: 20px;
+  border: 0;
+  border-radius: 50%;
+  padding: 10px;
+  margin: 0 20px;
+  cursor: pointer;
+}
+.action-btn:focus {
+  outline: 0;
+}
+.fa-play {
+  cursor: pointer;
+}
+
+.progress-container {
+  background: #dfdbdf;
+  border-radius: 5px;
+  margin: 10px 0;
+  height: 4px;
+  cursor: pointer;
+}
+
+.progress {
+  border-radius: 5px;
+  height: 100%;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
