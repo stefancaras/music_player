@@ -7,6 +7,7 @@ let songIndex = 0;
 let repeat = false;
 let random = false;
 
+// Functions
 const loadPlaylist = () => {
   let string = "";
   songs.forEach((song, i) => {
@@ -47,7 +48,13 @@ const nextSong = () => {
   playSong();
 };
 
-$(".music-container").addEventListener("click", (e) => {
+// Event listeners
+$("#progress-container").addEventListener("click", (e) => {
+  $("#audio").currentTime =
+    (e.offsetX / $("#progress-container").clientWidth) * $("#audio").duration;
+});
+
+$("#navigation").addEventListener("click", (e) => {
   const id = e.target.id;
   const parentId = e.target.parentElement.id;
   if (id === "play" || parentId === "play") {
@@ -67,15 +74,16 @@ $(".music-container").addEventListener("click", (e) => {
   } else if (id === "next" || parentId === "next") {
     nextSong();
   } else if (id === "repeat" || parentId === "repeat") {
-    $("#repeat").classList.toggle("text-danger");
+    $("#repeat").classList.toggle("text-pink");
     repeat = !repeat;
   } else if (id === "random" || parentId === "random") {
-    $("#random").classList.toggle("text-danger");
+    $("#random").classList.toggle("text-pink");
     random = !random;
-  } else if (id === "progress-container" || parentId === "progress-container") {
-    $("#audio").currentTime =
-      (e.offsetX / $("#progress-container").clientWidth) * $("#audio").duration;
-  } else if (e.target.dataset.id) {
+  }
+});
+
+$("#playlist").addEventListener("click", (e) => {
+  if (e.target.dataset.id) {
     prevIndex.push(songIndex);
     songIndex = +e.target.dataset.id;
     loadSong(songs[songIndex]);
@@ -109,5 +117,6 @@ $("#filter").addEventListener("keyup", (e) => {
   songIndex = 0;
 });
 
+// Execute when page loads
 loadPlaylist();
 loadSong(songs[0]);
