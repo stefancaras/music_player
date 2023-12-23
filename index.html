@@ -19,37 +19,46 @@
   </head>
   <body>
     <div class="music-container">
-      <div class="img-container m-3">
-        <img src="images/0.jpg" alt="music-cover" id="cover" />
-        <div class="dot absolute-center"></div>
-      </div>
-      <div class="music-info text-center w-100">
-        <h5 class="title fw-bold"></h5>
-        <h5 class="artist mb-4"></h5>
-        <div class="progress-container">
-          <div class="progress bg-primary"></div>
-        </div>
-        <div class="d-flex justify-content-between">
-          <div id="curr-time"></div>
+      <div class="music-info text-center w-100 mb-3">
+        <h5 class="title"></h5>
+        <h5 class="artist mb-3"></h5>
+        <div class="d-flex mx-15px">
+          <div id="curr-time">0:00</div>
+          <div id="progress-container">
+            <div class="progress bg-pink"></div>
+          </div>
           <div id="dur-time"></div>
         </div>
       </div>
 
-      <audio src="music/0.mp3" id="audio" preload="auto"></audio>
+      <audio id="audio" preload="auto"></audio>
 
-      <div class="navigation">
-        <button id="prev" class="action-btn text-primary">
+      <div id="navigation" class="d-flex justify-content-between w-100 mb-3">
+        <button id="repeat" class="action-btn text-color">
+          <i class="fas fa-repeat"></i>
+        </button>
+        <button id="prev" class="action-btn text-color">
           <i class="fas fa-backward"></i>
         </button>
-        <button id="play" class="action-btn bg-primary text-white">
+        <button id="play" class="action-btn bg-color text-color-dark">
           <i class="fas fa-play"></i>
         </button>
-        <button id="next" class="action-btn text-primary">
+        <button id="next" class="action-btn text-color">
           <i class="fas fa-forward"></i>
+        </button>
+        <button id="random" class="action-btn text-color">
+          <i class="fas fa-random"></i>
         </button>
       </div>
 
-      <ul class="playlist list-group overflow-auto w-100 mt-4"></ul>
+      <input
+        id="filter"
+        type="text"
+        class="form-control mb-3"
+        placeholder="Filter"
+      />
+
+      <ul id="playlist" class="list-group overflow-auto w-100"></ul>
     </div>
   </body>
 </html>

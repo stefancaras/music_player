@@ -1,99 +1,122 @@
-const $ = (query) => document.querySelector(query);
-const songs = [
-  "Cartoon - On & On (feat. Daniel Levi)",
-  "Janji - Heroes Tonight (feat. Johnning)",
-  "DEAF KEV - Invincible",
-  "Different Heaven & EH!DE - My Heart",
-  "Warriyo - Mortals (feat. Laura Brehm)",
-  "Disfigure - Blank",
-  "Elektronomia - Sky High",
-  "Cartoon - Why We Lose (feat. Coleman Trapp)",
-  "Electro-Light - Symbolism",
-  "Lost Sky - Fearless pt.II (feat. Chris Linton)",
-];
-let prevIndex = 0;
-let songIndex = 0;
+import { music_list } from "./music_list.js";
 
-songs.forEach(
-  (song, i) =>
-    ($(
-      ".playlist"
-    ).innerHTML += `<li class="list-group-item"><i data-id=${i} class="fas fa-play"></i><span>${song}</span></li>`)
-);
+const $ = (query) => document.querySelector(query);
+let songs = [...music_list];
+let prevIndex = [];
+let songIndex = 0;
+let repeat = false;
+let random = false;
+
+// Functions
+const loadPlaylist = () => {
+  let string = "";
+  songs.forEach((song, i) => {
+    string += `<li class="list-group-item"><i data-id=${i} class="fas fa-play"></i><span>${song}</span></li>`;
+  });
+  $("#playlist").innerHTML = string;
+};
 
 const loadSong = (song) => {
   const [artist, title] = song.split(" - ");
   $(".artist").textContent = artist;
   $(".title").textContent = title;
-  $("#audio").src = `music/${songIndex}.mp3`;
-  $("#cover").src = `images/${songIndex}.jpg`;
-  $(".playlist").childNodes[prevIndex].classList.remove("active");
-  $(".playlist").childNodes[songIndex].classList.add("active");
+  $("#audio").src = `./music/${song}.mp3`;
+  $("#playlist").children[prevIndex.at(-1)]?.classList.remove("active");
+  $("#playlist").children[songIndex].classList.add("active");
 };
 
 const playSong = () => {
-  $(".music-container").classList.add("play");
-  $("#play>i.fas").classList.remove("fa-play");
-  $("#play>i.fas").classList.add("fa-pause");
+  $("#play>i").classList.remove("fa-play");
+  $("#play>i").classList.add("fa-pause");
   $("#audio").play();
 };
 
 const pauseSong = () => {
-  $(".music-container").classList.remove("play");
-  $("#play>i.fas").classList.add("fa-play");
-  $("#play>i.fas").classList.remove("fa-pause");
+  $("#play>i").classList.add("fa-play");
+  $("#play>i").classList.remove("fa-pause");
   $("#audio").pause();
 };
 
 const nextSong = () => {
-  prevIndex = songIndex;
-  songIndex = songIndex === songs.length - 1 ? 0 : songIndex + 1;
+  prevIndex.push(songIndex);
+  songIndex = random
+    ? Math.floor(Math.random() * songs.length)
+    : songIndex === songs.length - 1
+    ? 0
+    : songIndex + 1;
   loadSong(songs[songIndex]);
   playSong();
 };
 
-$("#play").addEventListener("click", () => {
-  $(".music-container").classList.contains("play") ? pauseSong() : playSong();
+// Event listeners
+$("#progress-container").addEventListener("click", (e) => {
+  $("#audio").currentTime =
+    (e.offsetX / $("#progress-container").clientWidth) * $("#audio").duration;
 });
 
-$("#prev").addEventListener("click", () => {
-  prevIndex = songIndex;
-  songIndex = songIndex ? songIndex - 1 : songs.length - 1;
-  loadSong(songs[songIndex]);
-  playSong();
+$("#navigation").addEventListener("click", (e) => {
+  const id = e.target.id;
+  const parentId = e.target.parentElement.id;
+  if (id === "play" || parentId === "play") {
+    $("#play>i").classList.contains("fa-pause") ? pauseSong() : playSong();
+  } else if (id === "prev" || parentId === "prev") {
+    prevIndex.push(songIndex);
+    songIndex =
+      prevIndex.length > 1
+        ? prevIndex.at(-2)
+        : songIndex
+        ? songIndex - 1
+        : songs.length - 1;
+    loadSong(songs[songIndex]);
+    playSong();
+    prevIndex.pop();
+    prevIndex.pop();
+  } else if (id === "next" || parentId === "next") {
+    nextSong();
+  } else if (id === "repeat" || parentId === "repeat") {
+    $("#repeat").classList.toggle("text-pink");
+    repeat = !repeat;
+  } else if (id === "random" || parentId === "random") {
+    $("#random").classList.toggle("text-pink");
+    random = !random;
+  }
 });
 
-$("#next").addEventListener("click", nextSong);
-
-$(".playlist").addEventListener("click", (e) => {
+$("#playlist").addEventListener("click", (e) => {
   if (e.target.dataset.id) {
-    prevIndex = songIndex;
+    prevIndex.push(songIndex);
     songIndex = +e.target.dataset.id;
     loadSong(songs[songIndex]);
     playSong();
   }
 });
 
-$("#audio").addEventListener("ended", nextSong);
-
-$(".progress-container").addEventListener("click", (e) => {
-  $("#audio").currentTime =
-    (e.offsetX / $(".progress-container").clientWidth) * $("#audio").duration;
-});
-
 $("#audio").addEventListener("timeupdate", (e) => {
   const { duration, currentTime } = e.target;
   const min = Math.floor(currentTime / 60 || 0);
-  const sec = Math.floor(currentTime % 60);
+  const sec = Math.floor(currentTime % 60 || 0);
   $(".progress").style.width = `${(currentTime / duration) * 100}%`;
   $("#curr-time").textContent = min + ":" + (sec < 10 ? "0" + sec : sec);
 });
 
 $("#audio").addEventListener("loadedmetadata", (e) => {
   const duration = e.target.duration;
-  const min = Math.floor(duration / 60);
-  const sec = Math.floor(duration % 60);
+  const min = Math.floor(duration / 60 || 0);
+  const sec = Math.floor(duration % 60 || 0);
   $("#dur-time").textContent = min + ":" + (sec < 10 ? "0" + sec : sec);
 });
 
-loadSong(songs[songIndex]);
+$("#audio").addEventListener("ended", () => (repeat ? playSong() : nextSong()));
+
+$("#filter").addEventListener("keyup", (e) => {
+  songs = music_list.filter((song) =>
+    new RegExp(`${e.target.value.toLowerCase()}`).test(song.toLowerCase())
+  );
+  loadPlaylist();
+  prevIndex = [];
+  songIndex = 0;
+});
+
+// Execute when page loads
+loadPlaylist();
+loadSong(songs[0]);
