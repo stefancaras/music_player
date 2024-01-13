@@ -4,6 +4,7 @@ const $ = (query) => document.querySelector(query);
 let songs = [...music_list];
 let prevIndex = [];
 let songIndex = 0;
+let currentSong = "";
 let repeat = false;
 let random = false;
 
@@ -18,6 +19,7 @@ const loadPlaylist = () => {
 
 const loadSong = (song) => {
   const [artist, title] = song.split(" - ");
+  currentSong = song;
   $(".artist").textContent = artist;
   $(".title").textContent = title;
   $("#audio").src = `./music/${song}.mp3`;
@@ -115,6 +117,8 @@ $("#filter").addEventListener("keyup", (e) => {
   loadPlaylist();
   prevIndex = [];
   songIndex = 0;
+  if (songs.includes(currentSong))
+    $("#playlist").children[songs.indexOf(currentSong)].classList.add("active");
 });
 
 // Execute when page loads
