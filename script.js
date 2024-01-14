@@ -2,8 +2,8 @@ import { music_list } from "./music_list.js";
 
 const $ = (query) => document.querySelector(query);
 let songs = [...music_list];
-let prevIndex = [];
 let songIndex = 0;
+const prevSongs = [];
 let currentSong = "";
 let repeat = false;
 let random = false;
@@ -18,13 +18,16 @@ const loadPlaylist = () => {
 };
 
 const loadSong = (song) => {
+  if (!song) song = music_list[0];
   const [artist, title] = song.split(" - ");
+  $("#playlist").children[songs.indexOf(currentSong)]?.classList.remove(
+    "active"
+  );
   currentSong = song;
   $(".artist").textContent = artist;
   $(".title").textContent = title;
   $("#audio").src = `./music/${song}.mp3`;
-  $("#playlist").children[prevIndex.at(-1)]?.classList.remove("active");
-  $("#playlist").children[songIndex].classList.add("active");
+  $("#playlist").children[songs.indexOf(currentSong)]?.classList.add("active");
 };
 
 const playSong = () => {
@@ -40,12 +43,12 @@ const pauseSong = () => {
 };
 
 const nextSong = () => {
-  prevIndex.push(songIndex);
+  prevSongs.push(currentSong);
   songIndex = random
     ? Math.floor(Math.random() * songs.length)
     : songIndex === songs.length - 1
     ? 0
-    : songIndex + 1;
+    : songs.indexOf(currentSong) + 1;
   loadSong(songs[songIndex]);
   playSong();
 };
@@ -62,17 +65,14 @@ $("#navigation").addEventListener("click", (e) => {
   if (id === "play" || parentId === "play") {
     $("#play>i").classList.contains("fa-pause") ? pauseSong() : playSong();
   } else if (id === "prev" || parentId === "prev") {
-    prevIndex.push(songIndex);
-    songIndex =
-      prevIndex.length > 1
-        ? prevIndex.at(-2)
-        : songIndex
-        ? songIndex - 1
-        : songs.length - 1;
-    loadSong(songs[songIndex]);
+    loadSong(
+      prevSongs[0]
+        ? prevSongs.at(-1)
+        : songs[songIndex > 0 ? songIndex - 1 : songs.length - 1]
+    );
     playSong();
-    prevIndex.pop();
-    prevIndex.pop();
+    prevSongs.pop();
+    songIndex = songs.indexOf(currentSong);
   } else if (id === "next" || parentId === "next") {
     nextSong();
   } else if (id === "repeat" || parentId === "repeat") {
@@ -86,7 +86,7 @@ $("#navigation").addEventListener("click", (e) => {
 
 $("#playlist").addEventListener("click", (e) => {
   if (e.target.dataset.id) {
-    prevIndex.push(songIndex);
+    prevSongs.push(currentSong);
     songIndex = +e.target.dataset.id;
     loadSong(songs[songIndex]);
     playSong();
@@ -115,10 +115,8 @@ $("#filter").addEventListener("keyup", (e) => {
     new RegExp(`${e.target.value.toLowerCase()}`).test(song.toLowerCase())
   );
   loadPlaylist();
-  prevIndex = [];
   songIndex = 0;
-  if (songs.includes(currentSong))
-    $("#playlist").children[songs.indexOf(currentSong)].classList.add("active");
+  $("#playlist").children[songs.indexOf(currentSong)]?.classList.add("active");
 });
 
 // Execute when page loads
